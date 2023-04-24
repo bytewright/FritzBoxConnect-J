@@ -1,6 +1,6 @@
-package de.codingForFun.eL.fritzbox;
+package de.codingForFun.el.fritzbox;
 
-import de.codingForFun.eL.util.AppSecrets;
+import de.codingForFun.el.util.AppSecrets;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 
 @Component
@@ -64,5 +66,8 @@ public class FritzBoxHttpClient implements InitializingBean {
 
     public HttpResponse<InputStream> send(HttpRequest request) throws IOException, InterruptedException {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream());
+    }
+    public HttpResponse<String> getStringResponse(HttpRequest request) throws IOException, InterruptedException {
+        return httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
     }
 }

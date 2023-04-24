@@ -1,4 +1,4 @@
-package de.codingForFun.eL.fritzbox.session;
+package de.codingForFun.el.fritzbox;
 
 import java.security.GeneralSecurityException;
 

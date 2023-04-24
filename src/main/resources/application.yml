@@ -1,0 +1,15 @@
+spring:
+  application.name: FritzBoxSensorReaderApp
+  quartz:
+    scheduler-name: qrtz-scheduler-1
+    startup-delay: 120s
+    properties:
+      org.quartz.scheduler:
+        instanceId: AUTO
+      org.quartz.threadPool:
+            threadCount: 1
+  logging:
+    file.name: /log/appLog.log
+    level:
+      org.springframework: WARN
+      de.codingForFun.el: DEBUG

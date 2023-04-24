@@ -1,4 +1,4 @@
-package de.codingForFun.eL.fritzbox;
+package de.codingForFun.el.fritzbox;
 
 public class FritzResp {
     private final String sid;

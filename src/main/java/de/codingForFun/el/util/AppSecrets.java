@@ -1,4 +1,4 @@
-package de.codingForFun.eL.util;
+package de.codingForFun.el.util;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.actuate.health.Health;

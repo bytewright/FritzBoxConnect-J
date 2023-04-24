@@ -1,7 +1,6 @@
-package de.codingForFun.eL.fritzbox;
+package de.codingForFun.el.fritzbox;
 
 
-import de.codingForFun.eL.fritzbox.session.FailedChallengeResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

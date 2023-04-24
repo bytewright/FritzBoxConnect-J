@@ -1,6 +1,5 @@
-package de.codingForFun.eL.fritzbox;
+package de.codingForFun.el.fritzbox;
 
-import de.codingForFun.eL.fritzbox.session.FailedChallengeResponse;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
