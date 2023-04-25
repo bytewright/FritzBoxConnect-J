@@ -3,12 +3,17 @@ package de.codingForFun.el.homeAutomation;
 import de.codingForFun.el.fritzbox.DeviceInfo;
 import de.codingForFun.el.fritzbox.FritzConnectService;
 import de.codingForFun.el.fritzbox.ParseFritzRespComponent;
+import de.codingForFun.el.persistance.model.TempSensorReadingEntity;
+import de.codingForFun.el.persistance.repo.TempSensorReadingsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class FetchSensorDataService {
@@ -22,6 +27,8 @@ public class FetchSensorDataService {
     private ParseFritzRespComponent responseParser;
     @Autowired
     private FritzConnectService fritzConnectService;
+    @Autowired
+    private TempSensorReadingsRepository tempSensorReadingsRepository;
 
     public List<TempSensorReadout> getTemps(String ain) {
         String cmd = "getbasicdevicestats";
@@ -58,6 +65,19 @@ public class FetchSensorDataService {
             List<TempSensorReadout> temps = getTemps(tempSensorDevice.ain());
             LOGGER.info("Got {} temp readings from sensor {}, last one: {}",
                     temps.size(), tempSensorDevice, !temps.isEmpty() ? temps.get(0) : null);
+            tempSensorReadingsRepository.saveAll(toEntities(temps));
         }
+    }
+
+    private Set<TempSensorReadingEntity> toEntities(List<TempSensorReadout> temps) {
+        Set<TempSensorReadingEntity> resultSet = new HashSet<>();
+        for (TempSensorReadout temp : temps) {
+            TempSensorReadingEntity entity = new TempSensorReadingEntity();
+            entity.setTempValue(temp.temp().value());
+            entity.setDate(new Date(temp.dataRecordInstant().toEpochMilli()));
+            resultSet.add(entity);
+        }
+
+        return resultSet;
     }
 }
