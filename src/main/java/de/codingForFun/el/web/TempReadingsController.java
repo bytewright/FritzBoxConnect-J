@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.ZonedDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,6 +25,7 @@ import java.util.TimeZone;
 
 @RestController
 public class TempReadingsController {
+    private static final ZoneId ZONE_ID = TimeZone.getTimeZone("Berlin").toZoneId();
     private static final Logger LOGGER = LoggerFactory.getLogger(TempReadingsController.class);
     @Autowired
     private TempSensorReadingsRepository repository;
@@ -60,7 +61,9 @@ public class TempReadingsController {
 
     private Instant findStartTimestamp(String dateStr) {
         Date date = Date.valueOf(dateStr);
-        ZonedDateTime zonedDateTime = date.toLocalDate().atStartOfDay().atZone(TimeZone.getTimeZone("Berlin").toZoneId());
-        return zonedDateTime.toInstant();
+        return date.toLocalDate()
+                .atStartOfDay()
+                .atZone(ZONE_ID)
+                .toInstant();
     }
 }
