@@ -1,5 +1,6 @@
 package de.codingForFun.el.fritzbox;
 
+import de.codingForFun.el.homeAutomation.SensorAin;
 import de.codingForFun.el.homeAutomation.TempSensorReadout;
 import de.codingForFun.el.homeAutomation.Temperature;
 import org.slf4j.Logger;
@@ -80,7 +81,7 @@ public class ParseFritzRespComponent {
         }
     }
 
-    public List<TempSensorReadout> parseBasicDeviceStats(String fritzResponse) {
+    public List<TempSensorReadout> parseBasicDeviceStats(String ain, String fritzResponse) {
         /*
             Die Attribute von <stats> sind „count“ für Anzahl der Werte und „grid“ für den zeitliche
             Abstand/Auflösung in Sekunden. Das „datatime“ Attribute enthält den Unix-Timestamp der letzten
@@ -102,20 +103,20 @@ public class ParseFritzRespComponent {
             Instant datatime = Instant.ofEpochSecond(Integer.parseInt(datatimeValue));
             LOGGER.info("Found {} sensor datapoints in fritz response, last event from {}", count, datatime);
             String tempSensorValues = tempStats.getTextContent();
-            return parseSensorValues(count, tempSensorValues, grid, datatime);
+            return parseSensorValues(ain, count, tempSensorValues, grid, datatime);
         } catch (XPathExpressionException | ParserConfigurationException | IOException | SAXException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private List<TempSensorReadout> parseSensorValues(int count, String sensorValues, int grid, Instant datatime) {
+    private List<TempSensorReadout> parseSensorValues(String ain, int count, String sensorValues, int grid, Instant datatime) {
         List<String> stringList = List.of(sensorValues.split(","));
         if (stringList.size() != count) {
             LOGGER.warn("Expected {} values, but found only {}", count, stringList.size());
         }
         List<TempSensorReadout> tempSensorReadouts = new LinkedList<>();
         for (int i = 0; i < stringList.size(); i++) {
-            Instant dataPointInstant = datatime.plus((long) i * grid, ChronoUnit.SECONDS);
+            Instant dataPointInstant = datatime.minus((long) i * grid, ChronoUnit.SECONDS);
             String s = stringList.get(i);
             if ("-".equals(s)) {
                 LOGGER.info("Found missing datapoint at instant {}", dataPointInstant);
@@ -123,7 +124,7 @@ public class ParseFritzRespComponent {
             }
             try {
                 int i1 = Integer.parseInt(s);
-                tempSensorReadouts.add(new TempSensorReadout(dataPointInstant, new Temperature(i1)));
+                tempSensorReadouts.add(new TempSensorReadout(dataPointInstant, new Temperature(i1), new SensorAin(ain)));
             } catch (NumberFormatException e) {
                 LOGGER.error("Sensordata is not int: {}", s);
             }

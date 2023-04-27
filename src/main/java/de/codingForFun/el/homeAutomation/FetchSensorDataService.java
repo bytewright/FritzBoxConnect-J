@@ -5,12 +5,13 @@ import de.codingForFun.el.fritzbox.FritzConnectService;
 import de.codingForFun.el.fritzbox.ParseFritzRespComponent;
 import de.codingForFun.el.persistance.model.TempSensorReadingEntity;
 import de.codingForFun.el.persistance.repo.TempSensorReadingsRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +34,7 @@ public class FetchSensorDataService {
     public List<TempSensorReadout> getTemps(String ain) {
         String cmd = "getbasicdevicestats";
         String fritzResponse = fritzConnectService.sendRequestRawResponseBody(URL, ain, cmd);
-        List<TempSensorReadout> tempSensorReadouts = responseParser.parseBasicDeviceStats(fritzResponse);
+        List<TempSensorReadout> tempSensorReadouts = responseParser.parseBasicDeviceStats(ain, fritzResponse);
         return tempSensorReadouts;
     }
 
@@ -57,6 +58,7 @@ public class FetchSensorDataService {
 
     */
 
+    @Transactional
     public void fetchTempDataFromAllSensors() {
         LOGGER.info("Fetching all matching sensor device identifiers...");
         // erst mit gettemplatelistinfos die ains holen, dann temps fetchen
@@ -74,7 +76,8 @@ public class FetchSensorDataService {
         for (TempSensorReadout temp : temps) {
             TempSensorReadingEntity entity = new TempSensorReadingEntity();
             entity.setTempValue(temp.temp().value());
-            entity.setDate(new Date(temp.dataRecordInstant().toEpochMilli()));
+            entity.setTimestamp(Timestamp.from(temp.dataRecordInstant()));
+            entity.setSensorAin(temp.sensorAin());
             resultSet.add(entity);
         }
 

@@ -56,7 +56,7 @@ class ParseFritzRespComponentTest {
                 </devicestats>
                 """;
         //WHEN
-        List<TempSensorReadout> response = testee.parseBasicDeviceStats(rawXml);
+        List<TempSensorReadout> response = testee.parseBasicDeviceStats("fakeAin", rawXml);
 
         //THEN
         assertEquals(96, response.size());

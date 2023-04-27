@@ -1,8 +1,9 @@
 package de.codingForFun.el.persistance.model;
 
+import de.codingForFun.el.homeAutomation.SensorAin;
 import jakarta.persistence.*;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 public class TempSensorReadingEntity {
@@ -11,8 +12,10 @@ public class TempSensorReadingEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    private Date date;
+    private Timestamp timestamp;
     private Integer TempValue;
+
+    private SensorAin sensorAin;
 
     public Long getId() {
         return id;
@@ -22,12 +25,12 @@ public class TempSensorReadingEntity {
         this.id = id;
     }
 
-    public Date getDate() {
-        return date;
+    public Timestamp getTimestamp() {
+        return timestamp;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
     public Integer getTempValue() {
@@ -36,5 +39,13 @@ public class TempSensorReadingEntity {
 
     public void setTempValue(Integer tempValue) {
         TempValue = tempValue;
+    }
+
+    public SensorAin getSensorAin() {
+        return sensorAin;
+    }
+
+    public void setSensorAin(SensorAin sensorAin) {
+        this.sensorAin = sensorAin;
     }
 }
